@@ -49,6 +49,16 @@ export class SequelizeLikeRepository implements LikeRepository {
     return this.mapToDomain(likeModel);
   }
   
+  async findByBlogIdAndUserId(blogId: string, userId: string): Promise<Like | null> {
+    return this.findByBlogAndUserId(blogId, userId);
+  }
+  
+  async findAll(): Promise<Like[]> {
+    const likeModels = await LikeModel.findAll();
+    
+    return likeModels.map(likeModel => this.mapToDomain(likeModel));
+  }
+  
   async save(like: Like): Promise<void> {
     await LikeModel.upsert({
       id: like.getId().toString(),

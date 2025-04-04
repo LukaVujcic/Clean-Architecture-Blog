@@ -25,6 +25,14 @@ export class SequelizeBlogRepository implements BlogRepository {
     return blogModels.map(blogModel => this.mapToDomain(blogModel));
   }
   
+  async findByAuthorId(authorId: UserId): Promise<Blog[]> {
+    const blogModels = await BlogModel.findAll({ 
+      where: { authorId: authorId.toString() } 
+    });
+    
+    return blogModels.map(blogModel => this.mapToDomain(blogModel));
+  }
+  
   async findAll(): Promise<Blog[]> {
     const blogModels = await BlogModel.findAll();
     
