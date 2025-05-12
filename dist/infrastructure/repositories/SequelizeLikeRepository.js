@@ -48,13 +48,6 @@ let SequelizeLikeRepository = class SequelizeLikeRepository {
         }
         return this.mapToDomain(likeModel);
     }
-    async findByBlogIdAndUserId(blogId, userId) {
-        return this.findByBlogAndUserId(blogId, userId);
-    }
-    async findAll() {
-        const likeModels = await LikeModel_1.default.findAll();
-        return likeModels.map(likeModel => this.mapToDomain(likeModel));
-    }
     async save(like) {
         await LikeModel_1.default.upsert({
             id: like.getId().toString(),

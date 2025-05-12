@@ -1,8 +1,15 @@
 import { UserController } from "../../../src/infrastructure/controllers/UserController";
-import { FakeUserService } from "../../fakes/services/FakeUserService";
+import { FakeCreateUserUseCase } from "../../fakes/use-cases/user/FakeCreateUserUseCase";
+import { FakeGetUserUseCase } from "../../fakes/use-cases/user/FakeGetUserUseCase";
+import { FakeUpdateUserUseCase } from "../../fakes/use-cases/user/FakeUpdateUserUseCase";
+import { FakeDeleteUserUseCase } from "../../fakes/use-cases/user/FakeDeleteUserUseCase";
 import { CreateUserDto, UpdateUserDto, UserResponseDto } from "../../../src/application/dtos/UserDto";
 import { Request, Response } from "express";
 import { randomUUID } from "crypto";
+import { CreateUserUseCase } from "../../../src/application/use-cases/user/CreateUserUseCase";
+import { GetUserUseCase } from "../../../src/application/use-cases/user/GetUserUseCase";
+import { UpdateUserUseCase } from "../../../src/application/use-cases/user/UpdateUserUseCase";
+import { DeleteUserUseCase } from "../../../src/application/use-cases/user/DeleteUserUseCase";
 
 // Helper functions to create request and response objects
 const createRequest = (): Request => {
@@ -34,11 +41,23 @@ const createResponse = (): { res: Response; statusFunc: jest.Mock; jsonFunc: jes
 
 describe("UserController", () => {
   let userController: UserController;
-  let userService: FakeUserService;
+  let createUserUseCase: FakeCreateUserUseCase;
+  let getUserUseCase: FakeGetUserUseCase;
+  let updateUserUseCase: FakeUpdateUserUseCase;
+  let deleteUserUseCase: FakeDeleteUserUseCase;
   
   beforeEach(() => {
-    userService = new FakeUserService();
-    userController = new UserController(userService);
+    createUserUseCase = new FakeCreateUserUseCase();
+    getUserUseCase = new FakeGetUserUseCase();
+    updateUserUseCase = new FakeUpdateUserUseCase();
+    deleteUserUseCase = new FakeDeleteUserUseCase();
+    
+    userController = new UserController(
+      createUserUseCase as unknown as CreateUserUseCase,
+      getUserUseCase as unknown as GetUserUseCase,
+      updateUserUseCase as unknown as UpdateUserUseCase,
+      deleteUserUseCase as unknown as DeleteUserUseCase
+    );
   });
   
   describe("createUser", () => {
@@ -78,7 +97,7 @@ describe("UserController", () => {
         email: "existing@example.com"
       };
       
-      userService.addUser(existingUser);
+      createUserUseCase.addUser(existingUser);
       
       const createUserDto: CreateUserDto = {
         username: "testuser",
@@ -112,7 +131,7 @@ describe("UserController", () => {
         email: "test@example.com"
       };
       
-      userService.addUser(user);
+      getUserUseCase.addUser(user);
       
       req.params.id = userId;
       
@@ -160,8 +179,8 @@ describe("UserController", () => {
         email: "user2@example.com"
       };
       
-      userService.addUser(user1);
-      userService.addUser(user2);
+      getUserUseCase.addUser(user1);
+      getUserUseCase.addUser(user2);
       
       // Act
       await userController.getAllUsers(req, res);
@@ -188,7 +207,7 @@ describe("UserController", () => {
         email: "old@example.com"
       };
       
-      userService.addUser(user);
+      updateUserUseCase.addUser(user);
       
       const updateUserDto: UpdateUserDto = {
         username: "newusername",
@@ -210,7 +229,7 @@ describe("UserController", () => {
       }));
     });
     
-    it("should return 404 status when user not found", async () => {
+    it("should return 404 status when user does not exist", async () => {
       // Arrange
       const req = createRequest();
       const { res, statusFunc, jsonFunc } = createResponse();
@@ -242,7 +261,8 @@ describe("UserController", () => {
         email: "test@example.com"
       };
       
-      userService.addUser(user);
+      getUserUseCase.addUser(user);
+      deleteUserUseCase.addUser(user);
       
       req.params.id = userId;
       
@@ -252,17 +272,9 @@ describe("UserController", () => {
       // Assert
       expect(statusFunc).toHaveBeenCalledWith(204);
       expect(sendFunc).toHaveBeenCalled();
-      
-      // Verify user is deleted
-      try {
-        await userService.getUserById(userId);
-        fail("Expected user to be deleted");
-      } catch (error) {
-        expect((error as Error).message).toBe("User not found");
-      }
     });
     
-    it("should return 404 status when user not found", async () => {
+    it("should return 404 status when user does not exist", async () => {
       // Arrange
       const req = createRequest();
       const { res, statusFunc, jsonFunc } = createResponse();

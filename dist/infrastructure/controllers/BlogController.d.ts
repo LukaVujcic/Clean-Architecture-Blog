@@ -1,9 +1,15 @@
 import { Request, Response } from 'express';
-import { BlogService } from '../../application/interfaces/BlogService';
+import { CreateBlogUseCase } from '../../application/use-cases/blog/CreateBlogUseCase';
+import { GetBlogUseCase } from '../../application/use-cases/blog/GetBlogUseCase';
+import { UpdateBlogUseCase } from '../../application/use-cases/blog/UpdateBlogUseCase';
+import { DeleteBlogUseCase } from '../../application/use-cases/blog/DeleteBlogUseCase';
 import 'reflect-metadata';
 export declare class BlogController {
-    private blogService;
-    constructor(blogService: BlogService);
+    private createBlogUseCase;
+    private getBlogUseCase;
+    private updateBlogUseCase;
+    private deleteBlogUseCase;
+    constructor(createBlogUseCase: CreateBlogUseCase, getBlogUseCase: GetBlogUseCase, updateBlogUseCase: UpdateBlogUseCase, deleteBlogUseCase: DeleteBlogUseCase);
     /**
      * @swagger
      * /api/blogs:

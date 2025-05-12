@@ -1,22 +1,26 @@
 import { Container } from 'inversify';
 import { UserRepository } from '../../domain/ports/UserRepository';
 import { SequelizeUserRepository } from '../repositories/SequelizeUserRepository';
-import { UserService } from '../../application/interfaces/UserService';
-import { UserServiceImpl } from '../../application/services/UserServiceImpl';
-import { UserController } from '../controllers/UserController';
 import { BlogRepository } from '../../domain/ports/BlogRepository';
 import { SequelizeBlogRepository } from '../repositories/SequelizeBlogRepository';
-import { BlogService } from '../../application/interfaces/BlogService';
-import { BlogServiceImpl } from '../../application/services/BlogServiceImpl';
 import { CommentRepository } from '../../domain/ports/CommentRepository';
 import { SequelizeCommentRepository } from '../repositories/SequelizeCommentRepository';
-import { CommentService } from '../../application/interfaces/CommentService';
-import { CommentServiceImpl } from '../../application/services/CommentServiceImpl';
 import { LikeRepository } from '../../domain/ports/LikeRepository';
 import { SequelizeLikeRepository } from '../repositories/SequelizeLikeRepository';
-import { LikeService } from '../../application/interfaces/LikeService';
-import { LikeServiceImpl } from '../../application/services/LikeServiceImpl';
+import { UserController } from '../controllers/UserController';
 import { BlogController } from '../controllers/BlogController';
+
+// User Use Cases
+import { CreateUserUseCase } from '../../application/use-cases/user/CreateUserUseCase';
+import { GetUserUseCase } from '../../application/use-cases/user/GetUserUseCase';
+import { UpdateUserUseCase } from '../../application/use-cases/user/UpdateUserUseCase';
+import { DeleteUserUseCase } from '../../application/use-cases/user/DeleteUserUseCase';
+
+// Blog Use Cases
+import { CreateBlogUseCase } from '../../application/use-cases/blog/CreateBlogUseCase';
+import { GetBlogUseCase } from '../../application/use-cases/blog/GetBlogUseCase';
+import { UpdateBlogUseCase } from '../../application/use-cases/blog/UpdateBlogUseCase';
+import { DeleteBlogUseCase } from '../../application/use-cases/blog/DeleteBlogUseCase';
 
 // Create and configure container
 const container = new Container();
@@ -27,11 +31,17 @@ container.bind<BlogRepository>('BlogRepository').to(SequelizeBlogRepository);
 container.bind<CommentRepository>('CommentRepository').to(SequelizeCommentRepository);
 container.bind<LikeRepository>('LikeRepository').to(SequelizeLikeRepository);
 
-// Services
-container.bind<UserService>('UserService').to(UserServiceImpl);
-container.bind<BlogService>('BlogService').to(BlogServiceImpl);
-container.bind<CommentService>('CommentService').to(CommentServiceImpl);
-container.bind<LikeService>('LikeService').to(LikeServiceImpl);
+// User Use Cases
+container.bind<CreateUserUseCase>(CreateUserUseCase).toSelf();
+container.bind<GetUserUseCase>(GetUserUseCase).toSelf();
+container.bind<UpdateUserUseCase>(UpdateUserUseCase).toSelf();
+container.bind<DeleteUserUseCase>(DeleteUserUseCase).toSelf();
+
+// Blog Use Cases
+container.bind<CreateBlogUseCase>(CreateBlogUseCase).toSelf();
+container.bind<GetBlogUseCase>(GetBlogUseCase).toSelf();
+container.bind<UpdateBlogUseCase>(UpdateBlogUseCase).toSelf();
+container.bind<DeleteBlogUseCase>(DeleteBlogUseCase).toSelf();
 
 // Controllers
 container.bind<UserController>(UserController).toSelf();

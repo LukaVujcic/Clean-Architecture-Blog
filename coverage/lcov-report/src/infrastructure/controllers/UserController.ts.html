@@ -23,9 +23,9 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">94.28% </span>
+                <span class="strong">95.23% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>33/35</span>
+                <span class='fraction'>40/42</span>
             </div>
         
             
@@ -44,9 +44,9 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">93.93% </span>
+                <span class="strong">95% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>31/33</span>
+                <span class='fraction'>38/40</span>
             </div>
         
             
@@ -240,15 +240,27 @@
 <a name='L175'></a><a href='#L175'>175</a>
 <a name='L176'></a><a href='#L176'>176</a>
 <a name='L177'></a><a href='#L177'>177</a>
-<a name='L178'></a><a href='#L178'>178</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L178'></a><a href='#L178'>178</a>
+<a name='L179'></a><a href='#L179'>179</a>
+<a name='L180'></a><a href='#L180'>180</a>
+<a name='L181'></a><a href='#L181'>181</a>
+<a name='L182'></a><a href='#L182'>182</a>
+<a name='L183'></a><a href='#L183'>183</a>
+<a name='L184'></a><a href='#L184'>184</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">11x</span>
+<span class="cline-any cline-yes">11x</span>
+<span class="cline-any cline-yes">11x</span>
 <span class="cline-any cline-yes">11x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -419,14 +431,20 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import { Request, Response } from 'express';
 import { injectable, inject } from 'inversify';
-import { UserService } from '../../application/interfaces/UserService';
 import { CreateUserDto, UpdateUserDto } from '../../application/dtos/UserDto';
+import { CreateUserUseCase } from '../../application/use-cases/user/CreateUserUseCase';
+import { GetUserUseCase } from '../../application/use-cases/user/GetUserUseCase';
+import { UpdateUserUseCase } from '../../application/use-cases/user/UpdateUserUseCase';
+import { DeleteUserUseCase } from '../../application/use-cases/user/DeleteUserUseCase';
 import 'reflect-metadata';
 &nbsp;
 @injectable()
 export class UserController {
   constructor(
-    @inject('UserService') private userService: UserService
+    @inject(CreateUserUseCase) private createUserUseCase: CreateUserUseCase,
+    @inject(GetUserUseCase) private getUserUseCase: GetUserUseCase,
+    @inject(UpdateUserUseCase) private updateUserUseCase: UpdateUserUseCase,
+    @inject(DeleteUserUseCase) private deleteUserUseCase: DeleteUserUseCase
   ) {}
 &nbsp;
   /**
@@ -452,7 +470,7 @@ export class UserController {
   async createUser(req: Request, res: Response): Promise&lt;void&gt; {
     try {
       const createUserDto: CreateUserDto = req.body;
-      const user = await this.userService.createUser(createUserDto);
+      const user = await this.createUserUseCase.execute(createUserDto);
       res.status(201).json(user);
     } catch (error) {
       res.status(400).json({ message: (error as Error).message });
@@ -485,7 +503,7 @@ export class UserController {
   async getUserById(req: Request, res: Response): Promise&lt;void&gt; {
     try {
       const id = req.params.id;
-      const user = await this.userService.getUserById(id);
+      const user = await this.getUserUseCase.getById(id);
       res.status(200).json(user);
     } catch (error) {
       res.status(404).json({ message: (error as Error).message });
@@ -510,7 +528,7 @@ export class UserController {
    */
   async getAllUsers(req: Request, res: Response): Promise&lt;void&gt; {
     try {
-      const users = await this.userService.getAllUsers();
+      const users = await this.getUserUseCase.getAll();
       res.status(200).json(users);
     } catch (error) {
 <span class="cstat-no" title="statement not covered" >      res.status(500).json({ message: (error as Error).message });</span>
@@ -550,7 +568,7 @@ export class UserController {
     try {
       const id = req.params.id;
       const updateUserDto: UpdateUserDto = req.body;
-      const user = await this.userService.updateUser(id, updateUserDto);
+      const user = await this.updateUserUseCase.execute(id, updateUserDto);
       res.status(200).json(user);
     } catch (error) {
       res.status(404).json({ message: (error as Error).message });
@@ -582,13 +600,13 @@ export class UserController {
       
       // First check if the user exists
       try {
-        await this.userService.getUserById(id);
+        await this.getUserUseCase.getById(id);
       } catch (error) {
         res.status(404).json({ message: (error as Error).message });
         return;
       }
       
-      await this.userService.deleteUser(id);
+      await this.deleteUserUseCase.execute(id);
       res.status(204).send();
     } catch (error) {
 <span class="cstat-no" title="statement not covered" >      res.status(404).json({ message: (error as Error).message });</span>
@@ -601,7 +619,7 @@ export class UserController {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-04-02T22:07:06.461Z
+                at 2025-05-12T21:15:01.721Z
             </div>
         <script src="../../../prettify.js"></script>
         <script>

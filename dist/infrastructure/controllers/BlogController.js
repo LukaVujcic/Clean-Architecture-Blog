@@ -14,10 +14,17 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.BlogController = void 0;
 const inversify_1 = require("inversify");
+const CreateBlogUseCase_1 = require("../../application/use-cases/blog/CreateBlogUseCase");
+const GetBlogUseCase_1 = require("../../application/use-cases/blog/GetBlogUseCase");
+const UpdateBlogUseCase_1 = require("../../application/use-cases/blog/UpdateBlogUseCase");
+const DeleteBlogUseCase_1 = require("../../application/use-cases/blog/DeleteBlogUseCase");
 require("reflect-metadata");
 let BlogController = class BlogController {
-    constructor(blogService) {
-        this.blogService = blogService;
+    constructor(createBlogUseCase, getBlogUseCase, updateBlogUseCase, deleteBlogUseCase) {
+        this.createBlogUseCase = createBlogUseCase;
+        this.getBlogUseCase = getBlogUseCase;
+        this.updateBlogUseCase = updateBlogUseCase;
+        this.deleteBlogUseCase = deleteBlogUseCase;
     }
     /**
      * @swagger
@@ -42,7 +49,7 @@ let BlogController = class BlogController {
     async createBlog(req, res) {
         try {
             const createBlogDto = req.body;
-            const blog = await this.blogService.createBlog(createBlogDto);
+            const blog = await this.createBlogUseCase.execute(createBlogDto);
             res.status(201).json(blog);
         }
         catch (error) {
@@ -75,7 +82,7 @@ let BlogController = class BlogController {
     async getBlogById(req, res) {
         try {
             const id = req.params.id;
-            const blog = await this.blogService.getBlogById(id);
+            const blog = await this.getBlogUseCase.getById(id);
             res.status(200).json(blog);
         }
         catch (error) {
@@ -100,7 +107,7 @@ let BlogController = class BlogController {
      */
     async getAllBlogs(req, res) {
         try {
-            const blogs = await this.blogService.getAllBlogs();
+            const blogs = await this.getBlogUseCase.getAll();
             res.status(200).json(blogs);
         }
         catch (error) {
@@ -133,7 +140,7 @@ let BlogController = class BlogController {
     async getBlogsByAuthor(req, res) {
         try {
             const authorId = req.params.authorId;
-            const blogs = await this.blogService.getBlogsByAuthorId(authorId);
+            const blogs = await this.getBlogUseCase.getByAuthorId(authorId);
             res.status(200).json(blogs);
         }
         catch (error) {
@@ -173,7 +180,7 @@ let BlogController = class BlogController {
         try {
             const id = req.params.id;
             const updateBlogDto = req.body;
-            const blog = await this.blogService.updateBlog(id, updateBlogDto);
+            const blog = await this.updateBlogUseCase.execute(id, updateBlogDto);
             res.status(200).json(blog);
         }
         catch (error) {
@@ -202,7 +209,7 @@ let BlogController = class BlogController {
     async deleteBlog(req, res) {
         try {
             const id = req.params.id;
-            await this.blogService.deleteBlog(id);
+            await this.deleteBlogUseCase.execute(id);
             res.status(204).send();
         }
         catch (error) {
@@ -213,7 +220,13 @@ let BlogController = class BlogController {
 exports.BlogController = BlogController;
 exports.BlogController = BlogController = __decorate([
     (0, inversify_1.injectable)(),
-    __param(0, (0, inversify_1.inject)('BlogService')),
-    __metadata("design:paramtypes", [Object])
+    __param(0, (0, inversify_1.inject)(CreateBlogUseCase_1.CreateBlogUseCase)),
+    __param(1, (0, inversify_1.inject)(GetBlogUseCase_1.GetBlogUseCase)),
+    __param(2, (0, inversify_1.inject)(UpdateBlogUseCase_1.UpdateBlogUseCase)),
+    __param(3, (0, inversify_1.inject)(DeleteBlogUseCase_1.DeleteBlogUseCase)),
+    __metadata("design:paramtypes", [CreateBlogUseCase_1.CreateBlogUseCase,
+        GetBlogUseCase_1.GetBlogUseCase,
+        UpdateBlogUseCase_1.UpdateBlogUseCase,
+        DeleteBlogUseCase_1.DeleteBlogUseCase])
 ], BlogController);
 //# sourceMappingURL=BlogController.js.map

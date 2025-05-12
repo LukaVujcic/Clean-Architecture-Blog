@@ -1,13 +1,19 @@
 import { Request, Response } from 'express';
 import { injectable, inject } from 'inversify';
-import { UserService } from '../../application/interfaces/UserService';
 import { CreateUserDto, UpdateUserDto } from '../../application/dtos/UserDto';
+import { CreateUserUseCase } from '../../application/use-cases/user/CreateUserUseCase';
+import { GetUserUseCase } from '../../application/use-cases/user/GetUserUseCase';
+import { UpdateUserUseCase } from '../../application/use-cases/user/UpdateUserUseCase';
+import { DeleteUserUseCase } from '../../application/use-cases/user/DeleteUserUseCase';
 import 'reflect-metadata';
 
 @injectable()
 export class UserController {
   constructor(
-    @inject('UserService') private userService: UserService
+    @inject(CreateUserUseCase) private createUserUseCase: CreateUserUseCase,
+    @inject(GetUserUseCase) private getUserUseCase: GetUserUseCase,
+    @inject(UpdateUserUseCase) private updateUserUseCase: UpdateUserUseCase,
+    @inject(DeleteUserUseCase) private deleteUserUseCase: DeleteUserUseCase
   ) {}
 
   /**
@@ -33,7 +39,7 @@ export class UserController {
   async createUser(req: Request, res: Response): Promise<void> {
     try {
       const createUserDto: CreateUserDto = req.body;
-      const user = await this.userService.createUser(createUserDto);
+      const user = await this.createUserUseCase.execute(createUserDto);
       res.status(201).json(user);
     } catch (error) {
       res.status(400).json({ message: (error as Error).message });
@@ -66,7 +72,7 @@ export class UserController {
   async getUserById(req: Request, res: Response): Promise<void> {
     try {
       const id = req.params.id;
-      const user = await this.userService.getUserById(id);
+      const user = await this.getUserUseCase.getById(id);
       res.status(200).json(user);
     } catch (error) {
       res.status(404).json({ message: (error as Error).message });
@@ -91,7 +97,7 @@ export class UserController {
    */
   async getAllUsers(req: Request, res: Response): Promise<void> {
     try {
-      const users = await this.userService.getAllUsers();
+      const users = await this.getUserUseCase.getAll();
       res.status(200).json(users);
     } catch (error) {
       res.status(500).json({ message: (error as Error).message });
@@ -131,7 +137,7 @@ export class UserController {
     try {
       const id = req.params.id;
       const updateUserDto: UpdateUserDto = req.body;
-      const user = await this.userService.updateUser(id, updateUserDto);
+      const user = await this.updateUserUseCase.execute(id, updateUserDto);
       res.status(200).json(user);
     } catch (error) {
       res.status(404).json({ message: (error as Error).message });
@@ -163,13 +169,13 @@ export class UserController {
       
       // First check if the user exists
       try {
-        await this.userService.getUserById(id);
+        await this.getUserUseCase.getById(id);
       } catch (error) {
         res.status(404).json({ message: (error as Error).message });
         return;
       }
       
-      await this.userService.deleteUser(id);
+      await this.deleteUserUseCase.execute(id);
       res.status(204).send();
     } catch (error) {
       res.status(404).json({ message: (error as Error).message });

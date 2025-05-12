@@ -14,10 +14,17 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UserController = void 0;
 const inversify_1 = require("inversify");
+const CreateUserUseCase_1 = require("../../application/use-cases/user/CreateUserUseCase");
+const GetUserUseCase_1 = require("../../application/use-cases/user/GetUserUseCase");
+const UpdateUserUseCase_1 = require("../../application/use-cases/user/UpdateUserUseCase");
+const DeleteUserUseCase_1 = require("../../application/use-cases/user/DeleteUserUseCase");
 require("reflect-metadata");
 let UserController = class UserController {
-    constructor(userService) {
-        this.userService = userService;
+    constructor(createUserUseCase, getUserUseCase, updateUserUseCase, deleteUserUseCase) {
+        this.createUserUseCase = createUserUseCase;
+        this.getUserUseCase = getUserUseCase;
+        this.updateUserUseCase = updateUserUseCase;
+        this.deleteUserUseCase = deleteUserUseCase;
     }
     /**
      * @swagger
@@ -42,7 +49,7 @@ let UserController = class UserController {
     async createUser(req, res) {
         try {
             const createUserDto = req.body;
-            const user = await this.userService.createUser(createUserDto);
+            const user = await this.createUserUseCase.execute(createUserDto);
             res.status(201).json(user);
         }
         catch (error) {
@@ -75,7 +82,7 @@ let UserController = class UserController {
     async getUserById(req, res) {
         try {
             const id = req.params.id;
-            const user = await this.userService.getUserById(id);
+            const user = await this.getUserUseCase.getById(id);
             res.status(200).json(user);
         }
         catch (error) {
@@ -100,7 +107,7 @@ let UserController = class UserController {
      */
     async getAllUsers(req, res) {
         try {
-            const users = await this.userService.getAllUsers();
+            const users = await this.getUserUseCase.getAll();
             res.status(200).json(users);
         }
         catch (error) {
@@ -140,7 +147,7 @@ let UserController = class UserController {
         try {
             const id = req.params.id;
             const updateUserDto = req.body;
-            const user = await this.userService.updateUser(id, updateUserDto);
+            const user = await this.updateUserUseCase.execute(id, updateUserDto);
             res.status(200).json(user);
         }
         catch (error) {
@@ -171,13 +178,13 @@ let UserController = class UserController {
             const id = req.params.id;
             // First check if the user exists
             try {
-                await this.userService.getUserById(id);
+                await this.getUserUseCase.getById(id);
             }
             catch (error) {
                 res.status(404).json({ message: error.message });
                 return;
             }
-            await this.userService.deleteUser(id);
+            await this.deleteUserUseCase.execute(id);
             res.status(204).send();
         }
         catch (error) {
@@ -188,7 +195,13 @@ let UserController = class UserController {
 exports.UserController = UserController;
 exports.UserController = UserController = __decorate([
     (0, inversify_1.injectable)(),
-    __param(0, (0, inversify_1.inject)('UserService')),
-    __metadata("design:paramtypes", [Object])
+    __param(0, (0, inversify_1.inject)(CreateUserUseCase_1.CreateUserUseCase)),
+    __param(1, (0, inversify_1.inject)(GetUserUseCase_1.GetUserUseCase)),
+    __param(2, (0, inversify_1.inject)(UpdateUserUseCase_1.UpdateUserUseCase)),
+    __param(3, (0, inversify_1.inject)(DeleteUserUseCase_1.DeleteUserUseCase)),
+    __metadata("design:paramtypes", [CreateUserUseCase_1.CreateUserUseCase,
+        GetUserUseCase_1.GetUserUseCase,
+        UpdateUserUseCase_1.UpdateUserUseCase,
+        DeleteUserUseCase_1.DeleteUserUseCase])
 ], UserController);
 //# sourceMappingURL=UserController.js.map

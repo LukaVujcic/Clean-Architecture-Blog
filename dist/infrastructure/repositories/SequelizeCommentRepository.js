@@ -36,12 +36,6 @@ let SequelizeCommentRepository = class SequelizeCommentRepository {
         });
         return commentModels.map(commentModel => this.mapToDomain(commentModel));
     }
-    async findByAuthorId(authorId) {
-        const commentModels = await CommentModel_1.default.findAll({
-            where: { authorId: authorId.toString() }
-        });
-        return commentModels.map(commentModel => this.mapToDomain(commentModel));
-    }
     async findAll() {
         const commentModels = await CommentModel_1.default.findAll();
         return commentModels.map(commentModel => this.mapToDomain(commentModel));

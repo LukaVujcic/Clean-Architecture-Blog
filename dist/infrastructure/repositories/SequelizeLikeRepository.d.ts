@@ -6,8 +6,6 @@ export declare class SequelizeLikeRepository implements LikeRepository {
     findByBlogId(blogId: string): Promise<Like[]>;
     findByUserId(userId: string): Promise<Like[]>;
     findByBlogAndUserId(blogId: string, userId: string): Promise<Like | null>;
-    findByBlogIdAndUserId(blogId: string, userId: string): Promise<Like | null>;
-    findAll(): Promise<Like[]>;
     save(like: Like): Promise<void>;
     delete(id: LikeId): Promise<void>;
     private mapToDomain;

@@ -34,14 +34,6 @@ export class SequelizeCommentRepository implements CommentRepository {
     return commentModels.map(commentModel => this.mapToDomain(commentModel));
   }
   
-  async findByAuthorId(authorId: UserId): Promise<Comment[]> {
-    const commentModels = await CommentModel.findAll({ 
-      where: { authorId: authorId.toString() } 
-    });
-    
-    return commentModels.map(commentModel => this.mapToDomain(commentModel));
-  }
-  
   async findAll(): Promise<Comment[]> {
     const commentModels = await CommentModel.findAll();
     

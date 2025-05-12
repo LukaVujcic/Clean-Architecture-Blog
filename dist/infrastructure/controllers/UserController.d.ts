@@ -1,9 +1,15 @@
 import { Request, Response } from 'express';
-import { UserService } from '../../application/interfaces/UserService';
+import { CreateUserUseCase } from '../../application/use-cases/user/CreateUserUseCase';
+import { GetUserUseCase } from '../../application/use-cases/user/GetUserUseCase';
+import { UpdateUserUseCase } from '../../application/use-cases/user/UpdateUserUseCase';
+import { DeleteUserUseCase } from '../../application/use-cases/user/DeleteUserUseCase';
 import 'reflect-metadata';
 export declare class UserController {
-    private userService;
-    constructor(userService: UserService);
+    private createUserUseCase;
+    private getUserUseCase;
+    private updateUserUseCase;
+    private deleteUserUseCase;
+    constructor(createUserUseCase: CreateUserUseCase, getUserUseCase: GetUserUseCase, updateUserUseCase: UpdateUserUseCase, deleteUserUseCase: DeleteUserUseCase);
     /**
      * @swagger
      * /api/users:

@@ -1,13 +1,19 @@
 import { Request, Response } from 'express';
 import { injectable, inject } from 'inversify';
-import { BlogService } from '../../application/interfaces/BlogService';
 import { CreateBlogDto, UpdateBlogDto } from '../../application/dtos/BlogDto';
+import { CreateBlogUseCase } from '../../application/use-cases/blog/CreateBlogUseCase';
+import { GetBlogUseCase } from '../../application/use-cases/blog/GetBlogUseCase';
+import { UpdateBlogUseCase } from '../../application/use-cases/blog/UpdateBlogUseCase';
+import { DeleteBlogUseCase } from '../../application/use-cases/blog/DeleteBlogUseCase';
 import 'reflect-metadata';
 
 @injectable()
 export class BlogController {
   constructor(
-    @inject('BlogService') private blogService: BlogService
+    @inject(CreateBlogUseCase) private createBlogUseCase: CreateBlogUseCase,
+    @inject(GetBlogUseCase) private getBlogUseCase: GetBlogUseCase,
+    @inject(UpdateBlogUseCase) private updateBlogUseCase: UpdateBlogUseCase,
+    @inject(DeleteBlogUseCase) private deleteBlogUseCase: DeleteBlogUseCase
   ) {}
 
   /**
@@ -33,7 +39,7 @@ export class BlogController {
   async createBlog(req: Request, res: Response): Promise<void> {
     try {
       const createBlogDto: CreateBlogDto = req.body;
-      const blog = await this.blogService.createBlog(createBlogDto);
+      const blog = await this.createBlogUseCase.execute(createBlogDto);
       res.status(201).json(blog);
     } catch (error) {
       res.status(400).json({ message: (error as Error).message });
@@ -66,7 +72,7 @@ export class BlogController {
   async getBlogById(req: Request, res: Response): Promise<void> {
     try {
       const id = req.params.id;
-      const blog = await this.blogService.getBlogById(id);
+      const blog = await this.getBlogUseCase.getById(id);
       res.status(200).json(blog);
     } catch (error) {
       res.status(404).json({ message: (error as Error).message });
@@ -91,7 +97,7 @@ export class BlogController {
    */
   async getAllBlogs(req: Request, res: Response): Promise<void> {
     try {
-      const blogs = await this.blogService.getAllBlogs();
+      const blogs = await this.getBlogUseCase.getAll();
       res.status(200).json(blogs);
     } catch (error) {
       res.status(500).json({ message: (error as Error).message });
@@ -124,7 +130,7 @@ export class BlogController {
   async getBlogsByAuthor(req: Request, res: Response): Promise<void> {
     try {
       const authorId = req.params.authorId;
-      const blogs = await this.blogService.getBlogsByAuthorId(authorId);
+      const blogs = await this.getBlogUseCase.getByAuthorId(authorId);
       res.status(200).json(blogs);
     } catch (error) {
       res.status(404).json({ message: (error as Error).message });
@@ -164,7 +170,7 @@ export class BlogController {
     try {
       const id = req.params.id;
       const updateBlogDto: UpdateBlogDto = req.body;
-      const blog = await this.blogService.updateBlog(id, updateBlogDto);
+      const blog = await this.updateBlogUseCase.execute(id, updateBlogDto);
       res.status(200).json(blog);
     } catch (error) {
       res.status(404).json({ message: (error as Error).message });
@@ -193,7 +199,7 @@ export class BlogController {
   async deleteBlog(req: Request, res: Response): Promise<void> {
     try {
       const id = req.params.id;
-      await this.blogService.deleteBlog(id);
+      await this.deleteBlogUseCase.execute(id);
       res.status(204).send();
     } catch (error) {
       res.status(404).json({ message: (error as Error).message });
