@@ -23,7 +23,7 @@
     "mysql2": "^3.14.0",
     "pg": "^8.11.1",
     "pg-hstore": "^2.3.4",
-    "reflect-metadata": "^0.1.13",
+    "reflect-metadata": "~0.2.2",
     "sequelize": "^6.32.1",
     "sqlite3": "^5.1.6",
     "swagger-jsdoc": "^6.2.8",
