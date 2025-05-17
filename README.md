@@ -1,6 +1,40 @@
-# Blog API - Hexagonal Architecture Example
+# Blog Application with Hexagonal Architecture
 
-This is a sample blog API built using Hexagonal Architecture (Ports and Adapters) pattern in TypeScript and Node.js.
+A Node.js blog application built with TypeScript following hexagonal architecture principles.
+
+## Project Overview
+
+This project demonstrates a clean architecture approach to building a blog platform, separating business logic from infrastructure concerns through the use of hexagonal (ports and adapters) architecture.
+
+## Features
+
+- User management
+- Blog post creation and management
+- RESTful API with Express
+- Swagger documentation
+- Hexagonal architecture pattern implementation
+- Comprehensive testing strategy
+
+## Technology Stack
+
+- **Node.js & TypeScript**: Core platform
+- **Express**: Web framework
+- **InversifyJS**: Dependency injection
+- **Sequelize**: ORM for database interactions
+- **PostgreSQL**: Production database
+- **SQLite**: Development/Test database
+- **Jest**: Testing framework
+- **Swagger**: API documentation
+- **GitHub Actions**: CI/CD pipeline
+
+## Environment Configuration
+
+The application uses environment variables for configuration with support for different environments:
+
+- `.env`: Default environment configuration
+- `.env.test`: Test environment configuration
+
+### Test Environment Settings
 
 ## Architecture Overview
 
@@ -9,27 +43,20 @@ The application is structured following the Hexagonal Architecture (also known a
 - **Domain Layer** - Contains the business logic, entities, and ports (interfaces)
   - `entities/` - Core business objects
   - `ports/` - Interfaces for repositories (persistence)
+  - `repositories/` - Repository interfaces
 
 - **Application Layer** - Orchestrates the domain objects
   - `interfaces/` - Contains service interfaces
-  - `services/` - Implements use cases using domain objects
+  - `use-cases/` - Implements business use cases using domain objects
   - `dtos/` - Data Transfer Objects for external communication
+  - `mappers/` - Transforms data between different layers
 
 - **Infrastructure Layer** - Contains adapters for external systems
   - `controllers/` - HTTP API controllers
   - `repositories/` - Database access implementations
   - `models/` - ORM models
   - `config/` - Configuration for external systems
-
-## Technologies Used
-
-- Node.js & TypeScript
-- Express.js for API
-- Sequelize as ORM
-- InversifyJS for dependency injection
-- PostgreSQL for production database
-- SQLite for testing
-- Jest for testing
+  - `routes/` - API route definitions
 
 ## Getting Started
 
