@@ -129,4 +129,48 @@ npm run test:coverage
 
 ## License
 
-This project is licensed under the MIT License - see the LICENSE file for details. 
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+## Continuous Integration
+
+The project uses GitHub Actions for continuous integration. The CI pipeline includes:
+
+1. **Building the project**: `npm run build`
+2. **Running unit tests**: `npm run test:unit`
+3. **Running integration tests**: `npm run test:integration`
+4. **Running end-to-end tests**: `npm run test:e2e`
+5. **Generating test coverage reports**: `npm run test:coverage`
+
+### CI Environment
+
+The CI pipeline uses:
+- Node.js 18
+- PostgreSQL 15 for database tests
+- In-memory SQLite for lightweight tests
+
+## Development Setup
+
+1. Clone the repository
+2. Install dependencies: `npm install`
+3. Create a `.env` file based on `.env.example`
+4. Start the development server: `npm run dev`
+
+## Available Scripts
+
+- `npm run build` - Build the TypeScript project
+- `npm run start` - Start the production server
+- `npm run dev` - Start the development server with hot reloading
+- `npm test` - Run all tests
+- `npm run test:unit` - Run unit tests
+- `npm run test:integration` - Run integration tests
+- `npm run test:e2e` - Run end-to-end tests
+- `npm run test:coverage` - Generate test coverage reports
+
+## Project Structure
+
+This project follows the Hexagonal Architecture (also known as Ports and Adapters) pattern:
+
+- `src/domain/` - Core business logic, entities, and interfaces
+- `src/application/` - Use cases and application services
+- `src/infrastructure/` - External adapters (controllers, repositories, etc.)
+- `tests/` - Test files organized by test type 
