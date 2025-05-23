@@ -172,9 +172,10 @@ src/
 ├── domain/                 # Enterprise business rules
 │   ├── entities/          # Business objects
 │   ├── value-objects/     # Immutable domain objects
-│   └── ports/             # Interface definitions
-│       ├── repositories/  # Repository interfaces
-│       └── services/      # Service interfaces
+│   ├── ports/             # Interface definitions
+│   │   ├── repositories/  # Repository interfaces
+│   │   └── services/      # Service interfaces
+│   └── repositories/      # Repository interfaces (legacy)
 │
 ├── application/           # Application business rules
 │   ├── use-cases/        # Use case implementations
@@ -191,14 +192,26 @@ src/
 │   └── validators/      # Request validators
 │
 └── infrastructure/      # Frameworks and drivers
+    ├── config/         # Configuration
+    ├── controllers/    # Legacy controllers (to be moved)
+    ├── models/         # Legacy models (to be moved)
+    ├── repositories/   # Legacy repositories (to be moved)
     ├── persistence/    # Database implementations
-    │   ├── models/    # ORM models
+    │   ├── models/     # ORM models
     │   └── repositories/ # Repository implementations
-    ├── config/        # Configuration
-    ├── logging/       # Logging implementations
-    ├── security/      # Security implementations
-    └── messaging/     # Message queue implementations
+    ├── logging/        # Logging implementations
+    ├── security/       # Security implementations
+    └── messaging/      # Message queue implementations
+
+tests/
+├── unit/               # Unit tests
+├── integration/        # Integration tests
+└── e2e/               # End-to-end tests
 ```
+
+Note: Some directories in the infrastructure layer (controllers, models, repositories) are marked as legacy and should be moved to their proper locations according to Clean Architecture principles:
+- Controllers should be moved to interface-adapters/controllers
+- Models and repositories should be moved to infrastructure/persistence
 
 ## License
 
