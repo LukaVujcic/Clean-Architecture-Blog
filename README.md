@@ -1,10 +1,10 @@
-# Blog Application with Hexagonal Architecture
+# Blog Application with Clean Architecture
 
-A Node.js blog application built with TypeScript following hexagonal architecture principles.
+A Node.js blog application built with TypeScript following Clean Architecture principles.
 
 ## Project Overview
 
-This project demonstrates a clean architecture approach to building a blog platform, separating business logic from infrastructure concerns through the use of hexagonal (ports and adapters) architecture.
+This project demonstrates a clean architecture approach to building a blog platform, separating business logic from infrastructure concerns through the use of Clean Architecture principles.
 
 ## Features
 
@@ -12,7 +12,7 @@ This project demonstrates a clean architecture approach to building a blog platf
 - Blog post creation and management
 - RESTful API with Express
 - Swagger documentation
-- Hexagonal architecture pattern implementation
+- Clean Architecture implementation
 - Comprehensive testing strategy
 
 ## Technology Stack
@@ -27,36 +27,47 @@ This project demonstrates a clean architecture approach to building a blog platf
 - **Swagger**: API documentation
 - **GitHub Actions**: CI/CD pipeline
 
-## Environment Configuration
-
-The application uses environment variables for configuration with support for different environments:
-
-- `.env`: Default environment configuration
-- `.env.test`: Test environment configuration
-
-### Test Environment Settings
-
 ## Architecture Overview
 
-The application is structured following the Hexagonal Architecture (also known as Ports and Adapters) pattern:
+The application is structured following Clean Architecture principles, which consists of four main layers:
 
-- **Domain Layer** - Contains the business logic, entities, and ports (interfaces)
-  - `entities/` - Core business objects
-  - `ports/` - Interfaces for repositories (persistence)
+### 1. Domain Layer (Enterprise Business Rules)
+- `entities/` - Core business objects and enterprise-wide business rules
+- `value-objects/` - Immutable objects that describe aspects of the domain
+- `ports/` - Interface definitions for external dependencies
   - `repositories/` - Repository interfaces
+  - `services/` - Service interfaces for external services
 
-- **Application Layer** - Orchestrates the domain objects
-  - `interfaces/` - Contains service interfaces
-  - `use-cases/` - Implements business use cases using domain objects
-  - `dtos/` - Data Transfer Objects for external communication
-  - `mappers/` - Transforms data between different layers
+### 2. Application Layer (Application Business Rules)
+- `use-cases/` - Implementation of application-specific business rules
+- `interfaces/` - Interface definitions for use cases
+- `dtos/` - Data Transfer Objects for input/output
+- `mappers/` - Transforms data between layers
+- `services/` - Application services that orchestrate use cases
 
-- **Infrastructure Layer** - Contains adapters for external systems
-  - `controllers/` - HTTP API controllers
-  - `repositories/` - Database access implementations
+### 3. Interface Adapters Layer
+- `controllers/` - HTTP API controllers
+- `presenters/` - Data presenters for API responses
+- `middleware/` - Express middleware
+- `routes/` - API route definitions
+- `validators/` - Request validation logic
+
+### 4. Infrastructure Layer
+- `persistence/` - Database implementations
+  - `repositories/` - Repository implementations
   - `models/` - ORM models
-  - `config/` - Configuration for external systems
-  - `routes/` - API route definitions
+- `config/` - Configuration for external systems
+- `logging/` - Logging implementations
+- `security/` - Security implementations
+- `messaging/` - Message queue implementations
+
+### Key Principles
+- Dependencies point inward
+- Inner layers have no knowledge of outer layers
+- Domain layer is independent of any framework
+- Use cases orchestrate the flow of data to and from entities
+- Interface adapters convert data between the format most convenient for entities and use cases
+- Infrastructure concerns are kept in the outermost layer
 
 ## Getting Started
 
@@ -70,8 +81,8 @@ The application is structured following the Hexagonal Architecture (also known a
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/yourusername/blog-hexagonal.git
-cd blog-hexagonal
+git clone https://github.com/yourusername/blog-clean-architecture.git
+cd blog-clean-architecture
 ```
 
 2. Install dependencies:
@@ -152,6 +163,41 @@ npm test
 
 ```bash
 npm run test:coverage
+```
+
+## Project Structure
+
+```
+src/
+├── domain/                 # Enterprise business rules
+│   ├── entities/          # Business objects
+│   ├── value-objects/     # Immutable domain objects
+│   └── ports/             # Interface definitions
+│       ├── repositories/  # Repository interfaces
+│       └── services/      # Service interfaces
+│
+├── application/           # Application business rules
+│   ├── use-cases/        # Use case implementations
+│   ├── interfaces/       # Use case interfaces
+│   ├── dtos/            # Data Transfer Objects
+│   ├── mappers/         # Data transformers
+│   └── services/        # Application services
+│
+├── interface-adapters/   # Interface adapters
+│   ├── controllers/     # HTTP controllers
+│   ├── presenters/      # Response presenters
+│   ├── middleware/      # Express middleware
+│   ├── routes/          # API routes
+│   └── validators/      # Request validators
+│
+└── infrastructure/      # Frameworks and drivers
+    ├── persistence/    # Database implementations
+    │   ├── models/    # ORM models
+    │   └── repositories/ # Repository implementations
+    ├── config/        # Configuration
+    ├── logging/       # Logging implementations
+    ├── security/      # Security implementations
+    └── messaging/     # Message queue implementations
 ```
 
 ## License
