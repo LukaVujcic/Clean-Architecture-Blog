@@ -81,8 +81,8 @@ The application is structured following Clean Architecture principles, which con
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/yourusername/blog-clean-architecture.git
-cd blog-clean-architecture
+git clone https://github.com/yourusername/Clean-Architecture-Blog.git
+cd Clean-Architecture-Blog
 ```
 
 2. Install dependencies:
