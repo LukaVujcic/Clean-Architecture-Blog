@@ -7,11 +7,57 @@ on:
     branches: [ main, master, develop ]
 
 jobs:
-  build-and-test:
+  build:
     runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
 
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: 18
+        cache: 'npm'
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Build
+      run: npm run build
+
+    - name: Upload build artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: build-artifacts
+        path: dist/
+
+  unit-tests:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: 18
+        cache: 'npm'
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Download build artifacts
+      uses: actions/download-artifact@v3
+      with:
+        name: build-artifacts
+        path: dist/
+
+    - name: Run unit tests
+      run: npm run test:unit
+
+  integration-tests:
+    needs: build
+    runs-on: ubuntu-latest
     services:
-      # PostgreSQL service for integration and e2e tests
       postgres:
         image: postgres:15
         env:
@@ -20,7 +66,6 @@ jobs:
           POSTGRES_DB: blog_test
         ports:
           - 5432:5432
-        # Set health checks to wait until postgres has started
         options: >-
           --health-cmd pg_isready
           --health-interval 10s
@@ -39,7 +84,12 @@ jobs:
     - name: Install dependencies
       run: npm ci
 
-    # Ensure the .env.test exists with appropriate settings
+    - name: Download build artifacts
+      uses: actions/download-artifact@v3
+      with:
+        name: build-artifacts
+        path: dist/
+
     - name: Configure test environment
       run: |
         cat > .env.test << EOL
@@ -60,17 +110,88 @@ jobs:
         TEST_TIMEOUT=30000
         EOL
 
-    - name: Build
-      run: npm run build
-
-    - name: Run unit tests
-      run: npm run test:unit
-
     - name: Run integration tests
       run: npm run test:integration
 
+  e2e-tests:
+    needs: build
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: blog_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: 18
+        cache: 'npm'
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Download build artifacts
+      uses: actions/download-artifact@v3
+      with:
+        name: build-artifacts
+        path: dist/
+
+    - name: Configure test environment
+      run: |
+        cat > .env.test << EOL
+        # Database Configuration for Test Environment
+        DB_HOST=localhost
+        DB_PORT=5432
+        DB_NAME=blog_test
+        DB_USER=postgres
+        DB_PASSWORD=postgres
+        DB_LOGGING=false
+        DB_STORAGE=:memory:
+        
+        # Server Configuration
+        PORT=3000
+        NODE_ENV=test
+        
+        # Test Configuration
+        TEST_TIMEOUT=30000
+        EOL
+
     - name: Run end-to-end tests
       run: npm run test:e2e
+
+  test-coverage:
+    needs: [unit-tests, integration-tests, e2e-tests]
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: 18
+        cache: 'npm'
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Download build artifacts
+      uses: actions/download-artifact@v3
+      with:
+        name: build-artifacts
+        path: dist/
 
     - name: Run test coverage
       run: npm run test:coverage
