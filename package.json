@@ -1,7 +1,7 @@
 {
-  "name": "blog-hexagonal",
+  "name": "blog-clean-architecture",
   "version": "1.0.0",
-  "description": "Blog application using hexagonal architecture",
+  "description": "Blog application using clean architecture",
   "main": "dist/index.js",
   "scripts": {
     "build": "tsc",

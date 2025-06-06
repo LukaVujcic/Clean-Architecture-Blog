@@ -5,9 +5,9 @@ const options: swaggerJsdoc.Options = {
   definition: {
     openapi: '3.0.0',
     info: {
-      title: 'Blog API with Hexagonal Architecture',
+      title: 'Blog API with Clean Architecture',
       version,
-      description: 'A RESTful API for a blog application using hexagonal architecture',
+      description: 'A RESTful API for a blog application using clean architecture',
       license: {
         name: 'MIT',
         url: 'https://opensource.org/licenses/MIT',
