@@ -78,6 +78,34 @@ describe('Blog API', () => {
       expect(response.body).toHaveProperty('message');
       expect(response.body.message).toContain('Author not found');
     });
+
+    it('should return 400 if title is missing', async () => {
+      const blogData = {
+        content: 'This is a test blog post content',
+        authorId: testUserId
+      } as any;
+
+      const response = await request(app)
+        .post('/api/blogs')
+        .send(blogData);
+
+      expect(response.status).toBe(400);
+      expect(response.body).toHaveProperty('message');
+    });
+
+    it('should return 400 if content is missing', async () => {
+      const blogData = {
+        title: 'Test Blog',
+        authorId: testUserId
+      } as any;
+
+      const response = await request(app)
+        .post('/api/blogs')
+        .send(blogData);
+
+      expect(response.status).toBe(400);
+      expect(response.body).toHaveProperty('message');
+    });
   });
 
   describe('GET /api/blogs/:id', () => {

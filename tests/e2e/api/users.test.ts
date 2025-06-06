@@ -70,6 +70,47 @@ describe('User API', () => {
       expect(response.body).toHaveProperty('message');
       expect(response.body.message).toContain('email already exists');
     });
+
+    it('should return 400 if username already exists', async () => {
+      // Create a user first
+      const existingUser = {
+        id: uuidv4(),
+        username: 'duplicateuser',
+        email: 'dup@example.com',
+        password: 'password123'
+      };
+      await UserModel.create(existingUser);
+
+      // Try to create another user with the same username
+      const userData = {
+        username: 'duplicateuser',
+        email: 'unique@example.com',
+        password: 'password123'
+      };
+
+      const response = await request(app)
+        .post('/api/users')
+        .send(userData);
+
+      expect(response.status).toBe(400);
+      expect(response.body).toHaveProperty('message');
+      expect(response.body.message).toContain('username already exists');
+    });
+
+    it('should return 400 for invalid email format', async () => {
+      const userData = {
+        username: 'bademail',
+        email: 'not-an-email',
+        password: 'password123'
+      };
+
+      const response = await request(app)
+        .post('/api/users')
+        .send(userData);
+
+      expect(response.status).toBe(400);
+      expect(response.body).toHaveProperty('message');
+    });
   });
 
   describe('GET /api/users/:id', () => {
